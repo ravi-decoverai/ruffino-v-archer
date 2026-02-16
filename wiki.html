@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruffino v. Archer - Case Wiki</title>
+<style>
+  :root {
+    --bg: #f8f9fa;
+    --sidebar-bg: #ffffff;
+    --card-bg: #ffffff;
+    --accent: #3366cc;
+    --accent-light: #eaf0fb;
+    --text: #202124;
+    --text-secondary: #5f6368;
+    --border: #dadce0;
+    --tag-plaintiff: #1a73e8;
+    --tag-defendant: #d93025;
+    --tag-expert-p: #0d652d;
+    --tag-expert-d: #b06000;
+    --tag-witness: #7627bb;
+    --tag-attorney: #555;
+    --tag-medical: #00796b;
+    --tag-admin: #795548;
+    --highlight: #fef7e0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* Layout */
+  .layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 280px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+    z-index: 10;
+  }
+
+  .sidebar-header {
+    padding: 0 20px 16px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+
+  .sidebar-header h1 {
+    font-size: 18px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .sidebar-header .case-info {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .sidebar-search {
+    padding: 0 16px 12px;
+  }
+
+  .sidebar-search input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .sidebar-search input:focus {
+    border-color: var(--accent);
+  }
+
+  .sidebar-section {
+    padding: 8px 0;
+  }
+
+  .sidebar-section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-secondary);
+    padding: 4px 20px 6px;
+    font-weight: 600;
+  }
+
+  .sidebar-link {
+    display: block;
+    padding: 6px 20px;
+    font-size: 14px;
+    color: var(--text);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .sidebar-link:hover {
+    background: var(--accent-light);
+  }
+
+  .sidebar-link.active {
+    background: var(--accent-light);
+    color: var(--accent);
+    font-weight: 500;
+    border-right: 3px solid var(--accent);
+  }
+
+  /* Main Content */
+  .main {
+    margin-left: 280px;
+    flex: 1;
+    padding: 32px 48px;
+    max-width: 960px;
+  }
+
+  /* Page Sections */
+  .page {
+    display: none;
+  }
+
+  .page.active {
+    display: block;
+  }
+
+  /* Overview Page */
+  .overview-hero {
+    background: linear-gradient(135deg, #1a73e8 0%, #174ea6 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 32px;
+  }
+
+  .overview-hero h2 {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .overview-hero p {
+    opacity: 0.9;
+    font-size: 15px;
+    max-width: 600px;
+  }
+
+  .overview-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-card .number {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-card .label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .timeline-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .timeline-section h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+    display: inline-block;
+  }
+
+  .timeline-entry {
+    display: flex;
+    gap: 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .timeline-entry:last-child {
+    border-bottom: none;
+  }
+
+  .timeline-time {
+    font-weight: 600;
+    color: var(--accent);
+    min-width: 60px;
+    font-family: 'SF Mono', Monaco, monospace;
+    font-size: 13px;
+    padding-top: 2px;
+  }
+
+  .timeline-desc {
+    font-size: 14px;
+  }
+
+  /* Person Cards */
+  .person-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .person-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.15s;
+  }
+
+  .person-card:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+  }
+
+  .person-card .name {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .person-card .title {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+
+  /* Tags */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: white;
+  }
+
+  .tag-plaintiff { background: var(--tag-plaintiff); }
+  .tag-defendant { background: var(--tag-defendant); }
+  .tag-expert-plaintiff { background: var(--tag-expert-p); }
+  .tag-expert-defendant { background: var(--tag-expert-d); }
+  .tag-witness { background: var(--tag-witness); }
+  .tag-attorney { background: var(--tag-attorney); }
+  .tag-medical { background: var(--tag-medical); }
+  .tag-admin { background: var(--tag-admin); }
+
+  /* Bio Page */
+  .bio-header {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+
+  .bio-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .bio-header-info h2 {
+    font-size: 26px;
+    margin-bottom: 4px;
+  }
+
+  .bio-header-info .subtitle {
+    color: var(--text-secondary);
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+
+  .bio-section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+
+  .bio-section h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: var(--accent);
+  }
+
+  .bio-section p, .bio-section li {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  .bio-section ul {
+    padding-left: 20px;
+  }
+
+  .bio-section ul li {
+    margin-bottom: 4px;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 4px 12px;
+    font-size: 14px;
+  }
+
+  .info-grid .label {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 14px;
+    margin-bottom: 16px;
+    cursor: pointer;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+
+  .key-dispute {
+    background: var(--highlight);
+    border-left: 4px solid #f9ab00;
+    padding: 16px 20px;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 16px;
+  }
+
+  .key-dispute h4 {
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: #e37400;
+  }
+
+  .key-dispute p {
+    font-size: 14px;
+  }
+
+  .doc-sources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  .doc-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    background: #e8f0fe;
+    color: #1967d2;
+    font-weight: 500;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .sidebar { display: none; }
+    .main { margin-left: 0; padding: 16px; }
+    .overview-stats { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <h1>Ruffino v. Archer</h1>
+      <div class="case-info">Case 3:17-cv-00725<br>M.D. Tennessee</div>
+    </div>
+    <div class="sidebar-search">
+      <input type="text" id="searchInput" placeholder="Search people..." oninput="filterSidebar()">
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Navigation</div>
+      <a class="sidebar-link active" onclick="showPage('overview')">Overview & Timeline</a>
+      <a class="sidebar-link" onclick="showPage('dispute')">Key Disputes</a>
+    </div>
+    <div class="sidebar-section" id="sidebarPlaintiffs">
+      <div class="sidebar-section-title">Plaintiffs</div>
+      <a class="sidebar-link" onclick="showPage('john-ruffino')">John Ruffino</a>
+      <a class="sidebar-link" onclick="showPage('martha-ruffino')">Martha Ruffino</a>
+    </div>
+    <div class="sidebar-section" id="sidebarDefendants">
+      <div class="sidebar-section-title">Defendants</div>
+      <a class="sidebar-link" onclick="showPage('clark-archer')">Dr. Clark Archer</a>
+      <a class="sidebar-link" onclick="showPage('stonecrest')">StoneCrest Medical Center</a>
+    </div>
+    <div class="sidebar-section" id="sidebarExpertsP">
+      <div class="sidebar-section-title">Plaintiffs' Experts</div>
+      <a class="sidebar-link" onclick="showPage('troy-pope')">Dr. Troy Pope</a>
+      <a class="sidebar-link" onclick="showPage('alfred-callahan')">Dr. Alfred Callahan</a>
+      <a class="sidebar-link" onclick="showPage('rajat-dhar')">Dr. Rajat Dhar</a>
+    </div>
+    <div class="sidebar-section" id="sidebarExpertsD">
+      <div class="sidebar-section-title">Defendants' Experts</div>
+      <a class="sidebar-link" onclick="showPage('adrian-jarquin')">Dr. Adrian Jarquin-Valdivia</a>
+      <a class="sidebar-link" onclick="showPage('jodi-dodds')">Dr. Jodi Dodds</a>
+    </div>
+    <div class="sidebar-section" id="sidebarTreating">
+      <div class="sidebar-section-title">Treating Providers</div>
+      <a class="sidebar-link" onclick="showPage('suresh-chitturi')">Dr. Suresh Chitturi</a>
+      <a class="sidebar-link" onclick="showPage('robert-bromley')">Nurse Robert Bromley</a>
+      <a class="sidebar-link" onclick="showPage('carol-mcculloch')">Nurse Carol McCulloch</a>
+      <a class="sidebar-link" onclick="showPage('deka-efobi')">Dr. Deka Efobi</a>
+    </div>
+    <div class="sidebar-section" id="sidebarOther">
+      <div class="sidebar-section-title">Other Witnesses</div>
+      <a class="sidebar-link" onclick="showPage('robert-bromley-ii')">Robert Bromley II</a>
+      <a class="sidebar-link" onclick="showPage('jason-stropya')">Jason Stropya</a>
+      <a class="sidebar-link" onclick="showPage('robert-criner')">Robert Criner</a>
+    </div>
+    <div class="sidebar-section" id="sidebarAttorneys">
+      <div class="sidebar-section-title">Attorneys</div>
+      <a class="sidebar-link" onclick="showPage('attorneys')">All Attorneys</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main">
+
+    <!-- OVERVIEW PAGE -->
+    <div class="page active" id="page-overview">
+      <div class="overview-hero">
+        <h2>Ruffino v. Archer</h2>
+        <p>Medical malpractice case involving the failure to administer IV tPA and arrange transfer for endovascular thrombectomy following an acute ischemic stroke at StoneCrest Medical Center on February 17, 2016.</p>
+      </div>
+
+      <div class="overview-stats">
+        <div class="stat-card">
+          <div class="number">20</div>
+          <div class="label">Key People</div>
+        </div>
+        <div class="stat-card">
+          <div class="number">6</div>
+          <div class="label">Affidavits</div>
+        </div>
+        <div class="stat-card">
+          <div class="number">11</div>
+          <div class="label">Depositions</div>
+        </div>
+        <div class="stat-card">
+          <div class="number">3</div>
+          <div class="label">Expert Reports</div>
+        </div>
+      </div>
+
+      <div class="timeline-section">
+        <h3>Critical Timeline - February 17, 2016</h3>
+        <div class="timeline-entry"><div class="timeline-time">~0800</div><div class="timeline-desc">John Ruffino experiences dizziness / speech difficulty while driving a truck for work. Boss calls 911.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">0948</div><div class="timeline-desc">Arrives at StoneCrest ER by ambulance.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">0958</div><div class="timeline-desc">Triage by Nurse Carol McCulloch. <strong>No neurological deficits observed.</strong> Classified as CTAS 3 (urgent).</div></div>
+        <div class="timeline-entry"><div class="timeline-time">1000</div><div class="timeline-desc">Nurse Robert Bromley begins care. First neuro check: <strong>completely normal.</strong> Patient walks to bathroom, changes clothes.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">~1027</div><div class="timeline-desc">Head CT completed. No acute intracranial abnormality.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">1000-1200</div><div class="timeline-desc">Six serial neuro checks by Nurse Bromley (1000, 1015, 1030, 1045, 1100, 1200): <strong>all completely normal.</strong></div></div>
+        <div class="timeline-entry"><div class="timeline-time">~1220</div><div class="timeline-desc"><strong>Dr. Clark Archer first sees patient.</strong> Finds: slow/slurred speech, right hand weaker than left, dysphasia, right arm weakness. GCS 15, NIHSS 4.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">1252</div><div class="timeline-desc">CT angiogram ordered for "Neurological Deficit" - shows complete occlusion of proximal left MCA M1 segment.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">1253</div><div class="timeline-desc">Code Stroke called.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">~1300</div><div class="timeline-desc">Nurse Bromley sees speech abnormality (new change). Tells Dr. Archer patient was neurologically normal 1000-1200.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">1411</div><div class="timeline-desc">Dr. Archer's primary impression: TIA/CVA Syndrome, Acute. Aspirin ordered.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">1414</div><div class="timeline-desc">Patient deemed <strong>non-tPA candidate</strong> based on Dr. Archer and Dr. Chitturi's assessment.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">1512</div><div class="timeline-desc">CTA results called to Dr. Archer.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">1521</div><div class="timeline-desc">Dr. Chitturi dictates consult report. Assessment: "likely stroke," "beyond the window for any intervention."</div></div>
+        <div class="timeline-entry"><div class="timeline-time">1608</div><div class="timeline-desc">Dr. Archer addendum: Discussions with Dr. Franklin/Chitturi - transfer downtown to higher level of care.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">2250</div><div class="timeline-desc">Transferred to Centennial Medical Center. <strong>NIHSS now 13</strong> (deteriorated from 4).</div></div>
+      </div>
+
+      <div class="timeline-section">
+        <h3>Subsequent Events</h3>
+        <div class="timeline-entry"><div class="timeline-time">Feb 18</div><div class="timeline-desc">CT perfusion and MRI at Centennial show large left MCA stroke.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">Feb 26</div><div class="timeline-desc">Discharged from Centennial. Mild right-sided weakness and mild speech difficulty.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">Feb 27</div><div class="timeline-desc">Re-admitted after fall at home. NIHSS 21.</div></div>
+        <div class="timeline-entry"><div class="timeline-time">Mar 3</div><div class="timeline-desc">Discharged to St. Thomas Midtown Rehab.</div></div>
+      </div>
+    </div>
+
+    <!-- DISPUTE PAGE -->
+    <div class="page" id="page-dispute">
+      <h2 style="margin-bottom: 20px;">Key Disputes</h2>
+
+      <div class="key-dispute">
+        <h4>Central Question</h4>
+        <p>Did the failure to administer IV tPA and transfer John Ruffino to a comprehensive stroke center for endovascular thrombectomy on February 17, 2016, fall below the standard of care, and did this cause a worse neurological outcome?</p>
+      </div>
+
+      <div class="bio-section">
+        <h3>Plaintiffs' Position</h3>
+        <ul>
+          <li>Mr. Ruffino was neurologically normal from at least 0949 through 1200 on February 17, 2016.</li>
+          <li>Any symptoms by 0830 were, at most, caused by a TIA (transient ischemic attack), not a stroke.</li>
+          <li>The severe stroke did not manifest until at or after 1200.</li>
+          <li>When Dr. Archer identified new neurological deficits at ~1220, these changes had been present <strong>less than one hour</strong> since the patient was last seen neurologically normal at 1200.</li>
+          <li>Dr. Archer was required to initiate IV tPA and arrange transfer to a comprehensive stroke center.</li>
+          <li>Dr. Archer and Nurse Bromley fell below the standard of care by <strong>not effectively communicating</strong> to Dr. Chitturi that Mr. Ruffino was neurologically normal from 1000-1200.</li>
+          <li>Had treatment been provided within 6-8 hours of 1220, Mr. Ruffino would have had a better outcome.</li>
+          <li>CT angiogram revealed a clot suitable for endovascular thrombectomy at a comprehensive stroke center.</li>
+        </ul>
+      </div>
+
+      <div class="bio-section">
+        <h3>Defendants' Position</h3>
+        <ul>
+          <li>Mr. Ruffino's left MCA was already <strong>chronically occluded or 99% stenosed</strong> since at least December 2015 (MRA evidence).</li>
+          <li>He woke up with symptoms on February 17, making "last known normal" when he went to bed the night before.</li>
+          <li>He was well beyond the 3-hour tPA window by the time he arrived at StoneCrest at 9:48 a.m.</li>
+          <li>Even if tPA had been given, it would <strong>not have opened a chronically occluded vessel</strong>.</li>
+          <li>His NIHSS score of 4 made him <strong>ineligible for endovascular thrombectomy</strong> per AHA/ASA guidelines (requires NIHSS >= 6).</li>
+          <li>The M1 segment had been completely occluded or significantly stenosed since at least December 23, 2015; thrombectomy and stenting were not appropriate.</li>
+          <li>The care at StoneCrest met the standard of care and was not the proximate cause of any injury.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- JOHN RUFFINO -->
+    <div class="page" id="page-john-ruffino">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">JR</div>
+        <div class="bio-header-info">
+          <h2>John Ruffino</h2>
+          <div class="subtitle">Plaintiff / Patient</div>
+          <span class="tag tag-plaintiff">Plaintiff</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Personal Information</h3>
+        <div class="info-grid">
+          <span class="label">Age (2016)</span><span>56 years old</span>
+          <span class="label">Gender</span><span>Male, Caucasian, right-handed</span>
+          <span class="label">Occupation</span><span>Truck driver</span>
+          <span class="label">Spouse</span><span>Martha Ruffino</span>
+          <span class="label">Risk Factors</span><span>Hypertension, heavy cigarette smoker, obesity, hyperlipidemia</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Medical History</h3>
+        <ul>
+          <li>December 2015: Began experiencing intermittent transient neurological events (right arm numbness, heaviness, dizziness, sudden speech arrest).</li>
+          <li>First episode in WalMart with sudden speech arrest and right arm heaviness.</li>
+          <li>December 14, 2015: Referred to neurologist Dr. Deka Efobi by Dr. Luck. Diagnosed with TIAs, vertebrobasilar syndrome.</li>
+          <li>December 23, 2015: MRA head and MRI brain at University Medical Center. Reported normal by radiologist Dr. Matthew Bernhard, though defense experts later found MCA already occluded/99% stenosed.</li>
+          <li>February 11, 2016: Follow-up with Dr. Efobi. Still experiencing "mini strokes." Prescribed Neurontin 300mg. EEG was normal.</li>
+          <li>Had been on gabapentin for approximately 4 days before the February 17 incident.</li>
+        </ul>
+      </div>
+      <div class="bio-section">
+        <h3>Events of February 17, 2016</h3>
+        <ul>
+          <li>Was driving a truck for work when episodes recurred between 0800-0830. Boss called 911.</li>
+          <li>EMS reported speech slightly slurred.</li>
+          <li>Arrived at StoneCrest ER at 0948, triaged at 0956.</li>
+          <li>Neurologically normal from 1000-1200 per six serial neuro checks by Nurse Bromley.</li>
+          <li>New neurological deficits appeared between 1200-1300: slurred speech, right-sided facial weakness, dysphasia, right arm weakness.</li>
+          <li>NIHSS score of 4 at StoneCrest; deteriorated to NIHSS 13 by transfer to Centennial at 2250.</li>
+        </ul>
+      </div>
+      <div class="bio-section">
+        <h3>Outcome</h3>
+        <ul>
+          <li>CT perfusion at Centennial (Feb 18) showed large left MCA stroke.</li>
+          <li>Discharged home Feb 26, 2016 on clopidogrel, aspirin, atorvastatin, gabapentin, lisinopril.</li>
+          <li>Re-admitted Feb 27 after fall at home. NIHSS worsened to 21.</li>
+          <li>MRI Feb 28 showed deep left hemisphere stroke with no new restricted diffusion.</li>
+          <li>Discharged Mar 3 to St. Thomas Midtown Rehab.</li>
+          <li>Left with significant cognitive and physical disabilities.</li>
+        </ul>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Deposition - John Ruffino (x2)</span>
+          <span class="doc-badge">All Affidavits</span>
+          <span class="doc-badge">All Expert Reports</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARTHA RUFFINO -->
+    <div class="page" id="page-martha-ruffino">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">MR</div>
+        <div class="bio-header-info">
+          <h2>Martha Ruffino</h2>
+          <div class="subtitle">Plaintiff / Patient's Wife</div>
+          <span class="tag tag-plaintiff">Plaintiff</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Role in Case</h3>
+        <p>Wife of John Ruffino and co-plaintiff. Provided deposition testimony regarding the history of her husband's symptoms and events on February 17, 2016.</p>
+      </div>
+      <div class="bio-section">
+        <h3>Key Testimony</h3>
+        <ul>
+          <li>Reported the first episode of right arm numbness/heaviness and sudden speech arrest occurred at WalMart on December 15, 2015.</li>
+          <li>Did not see her husband before he left for work on February 17, 2016 (before 0600).</li>
+          <li>Helped her husband ambulate to the bathroom at the hospital.</li>
+          <li>Reported to treating physicians that Mr. Ruffino began experiencing facial weakness and speech trouble at least as early as 0800 on February 17, 2016.</li>
+          <li>Reported events involving speech difficulty, facial weakness, and right-sided weakness for at least the past month.</li>
+        </ul>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Deposition - Martha Ruffino</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DR. CLARK ARCHER -->
+    <div class="page" id="page-clark-archer">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">CA</div>
+        <div class="bio-header-info">
+          <h2>Dr. Clark E. Archer, M.D.</h2>
+          <div class="subtitle">Defendant / ER Physician, StoneCrest Medical Center</div>
+          <span class="tag tag-defendant">Defendant</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Role in Case</h3>
+        <p>Attending Emergency Medicine physician at StoneCrest Medical Center who treated John Ruffino on February 17, 2016. Primary defendant accused of medical malpractice for failure to administer IV tPA and failure to transfer the patient to a comprehensive stroke center.</p>
+      </div>
+      <div class="bio-section">
+        <h3>Key Facts</h3>
+        <ul>
+          <li>First saw Mr. Ruffino at approximately 1220 on February 17, 2016.</li>
+          <li>Physical exam at ~1220 found: patient oriented x3, slow/slurred speech, right hand weaker than left, dysphasia, right arm weakness, alert, pupils ERL, GCS 15.</li>
+          <li>Recognized the speech abnormality could be a neurological change due to ischemic stroke.</li>
+          <li>Documented primary impression by 1411 as TIA/CVA Syndrome, Acute. Selected "Stroke/CVA" template for his note.</li>
+          <li>Ordered CT angiogram at 1252 for "Neurological Deficit." Ordered aspirin and MRI brain at 1414.</li>
+          <li>Requested neurology consult. Communicated with consulting neurologist Dr. Chitturi.</li>
+          <li>Testified he does not remember and "truly cannot state" what Nurse Bromley told him about Mr. Ruffino's history.</li>
+          <li>His note documented: "no tpa recommended by dr chitturi."</li>
+          <li>Added addendum at 1608 documenting discussions with Dr. Franklin/Chitturi about transfer to higher level of care.</li>
+        </ul>
+      </div>
+      <div class="key-dispute">
+        <h4>Dispute</h4>
+        <p>Plaintiffs' experts allege Dr. Archer fell below the standard of care by failing to initiate tPA and arrange transfer to a comprehensive stroke center after identifying neurological deficits at ~1220. Defendants argue the patient was outside the treatment window.</p>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Deposition - Clark Archer</span>
+          <span class="doc-badge">Affidavit - Troy Pope</span>
+          <span class="doc-badge">Affidavit - Alfred Callahan</span>
+          <span class="doc-badge">Expert Reports</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STONECREST MEDICAL CENTER -->
+    <div class="page" id="page-stonecrest">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">SM</div>
+        <div class="bio-header-info">
+          <h2>StoneCrest Medical Center</h2>
+          <div class="subtitle">Defendant / HCA Health Services of Tennessee, Inc.</div>
+          <span class="tag tag-defendant">Defendant</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Information</h3>
+        <div class="info-grid">
+          <span class="label">Full Name</span><span>HCA Health Services of Tennessee, Inc. d/b/a TriStar StoneCrest Medical Center</span>
+          <span class="label">Location</span><span>200 Stonecrest Blvd, Smyrna, TN 37167</span>
+          <span class="label">Phone</span><span>615-768-2800</span>
+          <span class="label">System</span><span>Part of the HCA/TriStar hospital system</span>
+          <span class="label">Stroke Center</span><span>Not a comprehensive stroke center</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Key Facts</h3>
+        <ul>
+          <li>Facility where Mr. Ruffino presented to the ER on February 17, 2016.</li>
+          <li>ER practice: nurses did not communicate directly with consulting neurologists - only the ER physician did (per Nurse Bromley's testimony).</li>
+          <li>Custodian of Records: Melissa Gannon. Complete records: 81 pages.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- DR. TROY POPE -->
+    <div class="page" id="page-troy-pope">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">TP</div>
+        <div class="bio-header-info">
+          <h2>Dr. Troy T. Pope, M.D., FACEP</h2>
+          <div class="subtitle">Plaintiffs' Expert Witness (Emergency Medicine)</div>
+          <span class="tag tag-expert-plaintiff">Plaintiff Expert</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Qualifications</h3>
+        <div class="info-grid">
+          <span class="label">Specialty</span><span>Emergency Medicine</span>
+          <span class="label">Undergraduate</span><span>University of Virginia, 1998</span>
+          <span class="label">Medical Degree</span><span>Medical College of Georgia School of Medicine, 2002</span>
+          <span class="label">Residency</span><span>Emergency Medicine, University of Kentucky, completed 2005</span>
+          <span class="label">Board Cert.</span><span>American Board of Emergency Medicine since 2006</span>
+          <span class="label">Practice</span><span>ER physician, St. Joseph London Hospital, London, KY (since 2013)</span>
+          <span class="label">Experience</span><span>Over 10 years practicing emergency medicine (as of 2017)</span>
+          <span class="label">Address</span><span>67 Lula Cove Rd, Weaverville, NC 28787</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Key Expert Opinions</h3>
+        <ul>
+          <li>Mr. Ruffino was neurologically normal from at least 0949 through 1200 on February 17, 2016.</li>
+          <li>Any symptoms by 0830 were, at most, caused by a TIA, not a stroke.</li>
+          <li>When Dr. Archer identified new deficits at ~1220, these had been present less than one hour.</li>
+          <li>Dr. Archer was required to initiate IV tPA and arrange transfer to a comprehensive stroke center.</li>
+          <li>Dr. Archer and Nurse Bromley fell below the standard of care by not effectively communicating the patient's normal neuro status from 1000-1200 to Dr. Chitturi.</li>
+          <li>Mr. Ruffino likely had not suffered significant, irreversible brain injury by 1220.</li>
+          <li>Timely treatment would have improved outcomes regardless of M1 vs. M2 location.</li>
+        </ul>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Affidavit - Troy Pope</span>
+          <span class="doc-badge">Expert Report - Troy Pope</span>
+          <span class="doc-badge">Deposition - Troy Thomas Pope</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DR. ALFRED CALLAHAN -->
+    <div class="page" id="page-alfred-callahan">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">AC</div>
+        <div class="bio-header-info">
+          <h2>Dr. Alfred Samuel Callahan III, M.D.</h2>
+          <div class="subtitle">Plaintiffs' Expert Witness (Neurology)</div>
+          <span class="tag tag-expert-plaintiff">Plaintiff Expert</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Qualifications</h3>
+        <div class="info-grid">
+          <span class="label">Specialty</span><span>Neurology / Stroke Treatment</span>
+          <span class="label">Born</span><span>December 13, 1948, Columbus, Georgia</span>
+          <span class="label">Undergraduate</span><span>MIT (SB, 1971)</span>
+          <span class="label">Medical Degree</span><span>Vanderbilt University School of Medicine, 1975</span>
+          <span class="label">Internship</span><span>Internal Medicine, Vanderbilt, 1975-1976</span>
+          <span class="label">Residency</span><span>Internal Medicine, Vanderbilt, 1976-1977</span>
+          <span class="label">Fellowship</span><span>Neurology, Massachusetts General Hospital / Harvard Medical School, 1977-1980</span>
+          <span class="label">Board Cert.</span><span>Internal Medicine (1978); Neurosonology (1992)</span>
+          <span class="label">Experience</span><span>Over 30 years practicing neurology</span>
+          <span class="label">Practice</span><span>Stroke & Heart Attack Prevention Center, Nashville, TN (since 2005)</span>
+          <span class="label">Academic</span><span>Clinical Professor of Nursing (Medicine), Vanderbilt; Associate Clinical Prof., Vanderbilt; Adjunct Assoc. Prof. Neurology, Meharry Medical College</span>
+          <span class="label">Compensation</span><span>$500/hr for review; $3,500 paid to date</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Notable Research & Honors</h3>
+        <ul>
+          <li>Steering committee for SPARCL (one of the largest secondary stroke treatment studies, 4700+ subjects)</li>
+          <li>Writing subcommittee for Proact II</li>
+          <li>42+ peer-reviewed publications; 2 books; 3 patents (neurological monitoring devices)</li>
+          <li>Alpha Omega Alpha (1974); Justin Potter Merit Scholar at Vanderbilt</li>
+          <li>President, Nashville affiliate AHA (2002-2003); Chair, Operation Stroke AHA (1999-2005)</li>
+        </ul>
+      </div>
+      <div class="bio-section">
+        <h3>Key Expert Opinions</h3>
+        <ul>
+          <li>Mr. Ruffino was a hypertensive smoker with hyperlipidemia who had repeated TIAs culminating in stroke on Feb 17, 2016.</li>
+          <li>Endovascular reperfusion treatment would have provided benefit; treatment window extended from 0949 to 0327 on Feb 18.</li>
+          <li>Expected benefit: functional independence (modified Rankin score &le; 2).</li>
+          <li>Dr. Archer should have administered IV tPA and arranged transfer for thrombectomy.</li>
+          <li>Had treatment been provided within 6-8 hours of ~1220, Mr. Ruffino would have had a better outcome.</li>
+          <li>Cites Escape, Extend IA, and Swift Prime studies in support.</li>
+        </ul>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Affidavit - Alfred Callahan</span>
+          <span class="doc-badge">Expert Report - Alfred Callahan</span>
+          <span class="doc-badge">Deposition - Alfred Callahan</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DR. RAJAT DHAR -->
+    <div class="page" id="page-rajat-dhar">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">RD</div>
+        <div class="bio-header-info">
+          <h2>Dr. Rajat Dhar, M.D., FRCPC</h2>
+          <div class="subtitle">Plaintiffs' Expert Witness (Neurocritical Care)</div>
+          <span class="tag tag-expert-plaintiff">Plaintiff Expert</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Qualifications</h3>
+        <div class="info-grid">
+          <span class="label">Specialty</span><span>Neurology / Neurocritical Care</span>
+          <span class="label">Born</span><span>October 26, 1976, Delhi, India</span>
+          <span class="label">Citizenship</span><span>Canadian; US Permanent Resident</span>
+          <span class="label">Undergraduate</span><span>BA&Sc, McMaster University (1994-1997)</span>
+          <span class="label">Medical Degree</span><span>McMaster University, Hamilton, Ontario, 2000</span>
+          <span class="label">Residency</span><span>Neurology, University of Western Ontario, 2000-2005</span>
+          <span class="label">Fellowship</span><span>Neurological Critical Care, Washington University, 2005-2007</span>
+          <span class="label">Board Cert.</span><span>FRCP(C) Neurology (2005); ABPN Neurology (2006); Neurocritical Care (2007); Vascular Neurology (2009)</span>
+          <span class="label">Position</span><span>Associate Professor, Dept. of Neurology, Washington University School of Medicine (2016-present)</span>
+          <span class="label">Hospital</span><span>Attending Physician, Neuro/Neurosurgery ICU, Barnes-Jewish Hospital (since 2005)</span>
+          <span class="label">Compensation</span><span>$450/hr review; $550/hr deposition; $4,000/day trial; $2,400 paid to date</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Notable Research & Honors</h3>
+        <ul>
+          <li>43+ peer-reviewed publications; H-index: 13</li>
+          <li>Fellowship Director, Division of Neurocritical Care (since 2013)</li>
+          <li>NIH KL2 Career Development Award; AHA Scientist Development Grant ($308,000)</li>
+          <li>Governor General's Medal / Queen Elizabeth's Medal (1994, highest high school GPA)</li>
+          <li>Research interests: cerebral edema after ischemic stroke, SAH, vasospasm</li>
+        </ul>
+      </div>
+      <div class="bio-section">
+        <h3>Key Expert Opinions</h3>
+        <ul>
+          <li>Upon initial presentation, Mr. Ruffino was NOT having a confirmed stroke. Symptoms had either resolved or were fluctuating.</li>
+          <li>After repeatedly normal assessments, new neurological deficits appeared during 1220-1300 - this was an acute stroke necessitating consideration of thrombolytic and reperfusion therapies.</li>
+          <li>The timing of symptom onset was NOT clearly communicated between providers.</li>
+          <li>Nursing documentation of normal assessments (1000-1200) was not charted until hours after the neurologist's assessment.</li>
+          <li>If CTA revealed the MCA clot (which it did), patient would have been a candidate for endovascular thrombectomy (requiring transfer).</li>
+          <li>Had he received tPA and/or thrombectomy, he would more likely than not have had improved neurological outcome.</li>
+        </ul>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Rajat Dhar Rule 26 Report</span>
+          <span class="doc-badge">Deposition - Rajat Dhar</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DR. ADRIAN JARQUIN-VALDIVIA -->
+    <div class="page" id="page-adrian-jarquin">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">AJ</div>
+        <div class="bio-header-info">
+          <h2>Dr. Adrian A. Jarquin-Valdivia, M.D., R.D.M.S.</h2>
+          <div class="subtitle">Defendants' Expert Witness (Neurology) / Treating Neurologist</div>
+          <span class="tag tag-expert-defendant">Defense Expert</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Qualifications</h3>
+        <div class="info-grid">
+          <span class="label">Specialty</span><span>Neurology, Neurocritical Care, Vascular Neurology</span>
+          <span class="label">Born</span><span>June 16, 1966, Nicaragua</span>
+          <span class="label">Languages</span><span>Spanish and English</span>
+          <span class="label">Medical Degree</span><span>Universidad Nacional Autonoma de Honduras, 1984-1993</span>
+          <span class="label">Residency</span><span>Internal Medicine, University of Utah, 1995-1997; Neurology, Mayo Clinic, Rochester, MN, 1997-2000</span>
+          <span class="label">Fellowships</span><span>NeuroICU and MICU, UCSF, 2000-2002</span>
+          <span class="label">Board Cert.</span><span>Neurocritical Care (2007); Clinical Neurology; Vascular Neurology; Critical Care Medicine; Internal Medicine</span>
+          <span class="label">Position</span><span>Medical Director, Stroke Center at Centennial Medical Center (since 2009); Medical Director, Neurosciences ICU</span>
+          <span class="label">Prior Academic</span><span>Assistant Professor, Vanderbilt University (Neurology, Anesthesia, Internal Medicine), 2002-2009; Master Clinical Teacher</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Dual Role</h3>
+        <p>Dr. Jarquin-Valdivia served as both a <strong>treating neurologist</strong> for Mr. Ruffino at Centennial Medical Center (after transfer from StoneCrest) and as a <strong>defense expert witness</strong>.</p>
+      </div>
+      <div class="bio-section">
+        <h3>Key Expert Opinions</h3>
+        <ul>
+          <li>Mr. Ruffino experienced crescendo, stereotypical TIAs caused by a fixed lesion with structural narrowing in the MCA leading to a stroke.</li>
+          <li>Reviewed CT scan and MRI studies: February 18 and 28 MRI studies demonstrate <strong>old infarction</strong>.</li>
+          <li>CT angiogram shows occlusion in the <strong>M1 segment</strong> of the left MCA; the M2 segment is not occluded.</li>
+          <li>FDA only authorizes on-label tPA within 3 hours after last known normal. Treatment of M1 MCA occlusion with tPA does not assure improvement (84.5% of M1 patients had poor outcome despite tPA).</li>
+          <li>Mr. Ruffino's last known normal was when he went to bed the night before (reportedly woke up with symptoms).</li>
+          <li>The care at StoneCrest was not the proximate cause of any injury.</li>
+          <li>At discharge from Centennial (Feb 26), Mr. Ruffino had only mild right residual weakness and mild speech difficulty.</li>
+        </ul>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Affidavit - Adrian</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DR. JODI DODDS -->
+    <div class="page" id="page-jodi-dodds">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">JD</div>
+        <div class="bio-header-info">
+          <h2>Dr. Jodi A. Dodds, M.D.</h2>
+          <div class="subtitle">Defendants' Expert Witness (Vascular Neurology)</div>
+          <span class="tag tag-expert-defendant">Defense Expert</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Qualifications</h3>
+        <div class="info-grid">
+          <span class="label">Specialty</span><span>Vascular Neurology</span>
+          <span class="label">Location</span><span>Durham, North Carolina</span>
+          <span class="label">Undergraduate</span><span>BS Biology, University of South Carolina, 1997-2001</span>
+          <span class="label">Medical Degree</span><span>Medical University of South Carolina, 2001-2005</span>
+          <span class="label">Internship</span><span>Internal Medicine, University of Washington, 2005-2006</span>
+          <span class="label">Residency</span><span>Neurology, University of Washington, 2006-2009</span>
+          <span class="label">Fellowship</span><span>Vascular Neurology, Harborview Medical Center / UW, 2009-2010</span>
+          <span class="label">Board Cert.</span><span>Neurology (2010); Vascular Neurology (2011)</span>
+          <span class="label">Position</span><span>Asst. Professor, Duke University School of Medicine (since 2015); Vascular Neurology Fellowship Program Director at Duke; Medical Director, Duke Regional Hospital Stroke Center</span>
+          <span class="label">Honors</span><span>Charlotte Magazine "Top Doctors" (2012-2014); "Forty Under 40"; "Fifty Most Influential Women"</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Key Expert Opinions</h3>
+        <ul>
+          <li>Mr. Ruffino experienced crescendo, stereotypical TIAs from a fixed lesion in the left MCA.</li>
+          <li>December 23, 2015 MRA demonstrates the left MCA was <strong>either completely occluded in the distal M1 segment or 99% stenosed</strong>.</li>
+          <li>Main risk factors: chronic smoking and hypertension.</li>
+          <li>On Feb 17, 2016, given long-standing M1 occlusion, thrombectomy was NOT appropriate. tPA was not indicated and would not have opened the vessel.</li>
+          <li>Stenting was not indicated per the 2011 SAMMPRIS trial.</li>
+          <li>Mr. Ruffino's last known normal was when he went to bed the night before; arrived at StoneCrest well beyond 3 hours.</li>
+          <li>Feb 18 MRI at Centennial shows a mix of <strong>acute and chronic infarction</strong>.</li>
+          <li>Even if tPA had been given shortly after arrival, it likely would not have changed the outcome.</li>
+        </ul>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Affidavit - Jodi Dodds</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DR. SURESH CHITTURI -->
+    <div class="page" id="page-suresh-chitturi">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">SC</div>
+        <div class="bio-header-info">
+          <h2>Dr. Suresh Chitturi, M.D.</h2>
+          <div class="subtitle">Consulting Neurologist, StoneCrest</div>
+          <span class="tag tag-medical">Treating Provider</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Qualifications</h3>
+        <div class="info-grid">
+          <span class="label">Specialty</span><span>Neurology, Clinical Neurophysiology</span>
+          <span class="label">Residency</span><span>Neurology, Wayne State University, Detroit, MI, 2005-2008</span>
+          <span class="label">Fellowship</span><span>Clinical Neurophysiology, Wayne State University, 2009</span>
+          <span class="label">Board Cert.</span><span>Neurology (2008); Clinical Neurophysiology (2011)</span>
+          <span class="label">Practice</span><span>Middle Tennessee Neurology, Smyrna, TN</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Role in Case</h3>
+        <p>Consulting neurologist who provided on-call coverage at StoneCrest ER on February 17, 2016. Was consulted by Dr. Archer to evaluate Mr. Ruffino.</p>
+      </div>
+      <div class="bio-section">
+        <h3>Key Facts & Opinions</h3>
+        <ul>
+          <li>Spoke to Dr. Archer about Mr. Ruffino before 1254. Reviewed chart at 1254.</li>
+          <li>In addition to Dr. Archer's report, relied on history from the Ruffinos: symptoms began at least as early as 0800 on Feb 17.</li>
+          <li>Mr. Ruffino did NOT report that symptoms had resolved at any time since presentation.</li>
+          <li>By the time Dr. Chitturi was contacted, at least 4.5 hours had passed since reported symptom onset - making the patient <strong>NOT a candidate for tPA</strong>.</li>
+          <li>Even if contacted within 4.5 hours, would NOT have ordered tPA based on the one-month symptom history.</li>
+          <li>Maximum NIHSS score was 4, and AHA/ASA guidelines confirm patients with NIHSS &lt; 6 are not candidates for endovascular thrombectomy.</li>
+          <li>Dictated consult report at 1521. Assessment: "likely stroke," "beyond the window for any intervention including TPA."</li>
+          <li>Did NOT appear to be aware that Mr. Ruffino was neurologically normal from 1000-1200.</li>
+        </ul>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Affidavit - Suresh Chitturi</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- NURSE ROBERT BROMLEY -->
+    <div class="page" id="page-robert-bromley">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">RB</div>
+        <div class="bio-header-info">
+          <h2>Robert "Tony" Bromley, RN</h2>
+          <div class="subtitle">ER Nurse, StoneCrest Medical Center</div>
+          <span class="tag tag-medical">Treating Provider</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Background</h3>
+        <div class="info-grid">
+          <span class="label">License</span><span>RN since 2007</span>
+          <span class="label">Experience</span><span>5-6 years at StoneCrest ER by Feb 2016; usually worked at least 2 days/week</span>
+          <span class="label">Skills</span><span>Familiar with stroke signs (facial droop, weakness, slurred speech); knew how to perform thorough neuro checks</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Key Actions & Testimony</h3>
+        <ul>
+          <li>First saw Mr. Ruffino at 1000 as his assigned nurse. Documented onset of episode as "Less Than 1 Hour Ago."</li>
+          <li>Performed <strong>six documented neuro checks</strong> at 1000, 1015, 1030, 1045, 1100, and 1200 - <strong>all completely normal</strong>.</li>
+          <li>At 1000: no slurred speech, patient walking to bathroom, changing clothes.</li>
+          <li>At 1008: documented no acute stroke or neurological diagnosis.</li>
+          <li>At 1030: patient walked to restroom with steady, even gait.</li>
+          <li>Patient was "completely neurologically normal" at 1200.</li>
+          <li><strong>First observed abnormality at ~1300:</strong> speech abnormality (slurred speech/expressive aphasia) - a NEW change.</li>
+          <li>By ~1300, told Dr. Archer the patient had been neurologically normal from 1000-1200.</li>
+          <li>ER nurses at StoneCrest did not talk with consulting neurologists directly - only the ER physician did.</li>
+          <li>Did not contact an ER physician before 1300 because he did not think the patient was having a stroke.</li>
+        </ul>
+      </div>
+      <div class="key-dispute">
+        <h4>Dispute</h4>
+        <p>Plaintiffs argue Nurse Bromley's documentation that Mr. Ruffino was neurologically normal from 1000-1200 is critical evidence that the stroke onset was new at ~1220, not from the morning. The failure to communicate this to the consulting neurologist is alleged as a breach of the standard of care.</p>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Deposition - Robert Bromley</span>
+          <span class="doc-badge">Referenced in all Affidavits & Expert Reports</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- NURSE CAROL MCCULLOCH -->
+    <div class="page" id="page-carol-mcculloch">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">CM</div>
+        <div class="bio-header-info">
+          <h2>Carol McCulloch, RN</h2>
+          <div class="subtitle">Triage Nurse, StoneCrest ER</div>
+          <span class="tag tag-medical">Treating Provider</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Background</h3>
+        <div class="info-grid">
+          <span class="label">Experience</span><span>Approximately 30 years of ER experience by February 2016</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Key Facts & Testimony</h3>
+        <ul>
+          <li>Performed the initial ER assessment of Mr. Ruffino on Feb 17, 2016. First contact at 0958.</li>
+          <li><strong>Did not observe a single neurological deficit</strong> during initial assessment.</li>
+          <li>Found everything completely normal: alert, could move all extremities.</li>
+          <li>Classified Mr. Ruffino as CTAS 3/urgent (middle of the 1-5 range).</li>
+          <li>Would not have classified him as a 3 if she thought he was having a stroke.</li>
+          <li>Did not call a Code Stroke or alert a physician.</li>
+          <li>"No reason" to think Mr. Ruffino was having a stroke at the time of assessment.</li>
+        </ul>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Deposition - Carol McCulloch</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DR. DEKA EFOBI -->
+    <div class="page" id="page-deka-efobi">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">DE</div>
+        <div class="bio-header-info">
+          <h2>Dr. Deka A. Efobi, M.D.</h2>
+          <div class="subtitle">Private Treating Neurologist</div>
+          <span class="tag tag-medical">Treating Provider</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Practice Information</h3>
+        <div class="info-grid">
+          <span class="label">Practice</span><span>Neurology Clinic Associates</span>
+          <span class="label">Address</span><span>305 W. Main Street, Lebanon, TN 37087</span>
+          <span class="label">Phone</span><span>(615) 443-9912</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Treatment of Mr. Ruffino</h3>
+        <ul>
+          <li>Mr. Ruffino's private neurologist prior to the February 17 ER visit.</li>
+          <li><strong>Dec 14, 2015:</strong> First saw Mr. Ruffino (referred by Dr. Luck). Patient reported "mini strokes" - right-sided heaviness and paresthesia for 2 months, 3 spells with dysarthria lasting a few minutes each.</li>
+          <li>Ordered MRA Brain, MRI Brain, Hypercoagulable Panel, and ECHO. MRI/MRA reported negative by radiologist Dr. Matthew Bernhard.</li>
+          <li>Assessment: TIA, vertebrobasilar syndrome, multiple CVD risk factors (HTN, hyperlipidemia, tobacco dependence).</li>
+          <li><strong>Feb 11, 2016:</strong> Follow-up. Patient still experiencing "mini strokes," headaches, memory loss, difficulty swallowing. Prescribed Neurontin 300mg. Ordered EEG (normal). Encouraged smoking cessation (patient refused).</li>
+        </ul>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Affidavit - Custodian of Records (Freya Brown)</span>
+          <span class="doc-badge">Referenced in Affidavits</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROBERT BROMLEY II -->
+    <div class="page" id="page-robert-bromley-ii">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">RB</div>
+        <div class="bio-header-info">
+          <h2>Robert Bromley II</h2>
+          <div class="subtitle">Witness</div>
+          <span class="tag tag-witness">Witness</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Role</h3>
+        <p>Deponent in the case. Gave deposition testimony. Relationship to Nurse Robert "Tony" Bromley is likely familial (son or relative sharing the name).</p>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Deposition - Robert Bromley II</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- JASON STROPYA -->
+    <div class="page" id="page-jason-stropya">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">JS</div>
+        <div class="bio-header-info">
+          <h2>Jason Stropya</h2>
+          <div class="subtitle">Witness</div>
+          <span class="tag tag-witness">Witness</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Role</h3>
+        <p>Deponent in the case. Gave deposition testimony related to the events of February 17, 2016.</p>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Deposition - Jason Stropya</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROBERT CRINER -->
+    <div class="page" id="page-robert-criner">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <div class="bio-header">
+        <div class="bio-avatar">RC</div>
+        <div class="bio-header-info">
+          <h2>Robert Criner</h2>
+          <div class="subtitle">Witness</div>
+          <span class="tag tag-witness">Witness</span>
+        </div>
+      </div>
+      <div class="bio-section">
+        <h3>Role</h3>
+        <p>Deponent in the case. Gave deposition testimony related to the events surrounding John Ruffino's care.</p>
+      </div>
+      <div class="bio-section">
+        <h3>Document Sources</h3>
+        <div class="doc-sources">
+          <span class="doc-badge">Deposition - Robert Criner</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ATTORNEYS -->
+    <div class="page" id="page-attorneys">
+      <a class="back-link" onclick="showPage('overview')">&larr; Back to Overview</a>
+      <h2 style="margin-bottom: 20px;">Attorneys</h2>
+
+      <div class="bio-section">
+        <h3>Plaintiffs' Counsel</h3>
+        <div style="margin-bottom: 16px;">
+          <p><strong>Cummings Manookian PLC</strong></p>
+          <p style="font-size: 13px; color: var(--text-secondary);">45 Music Square West, Nashville, TN 37203</p>
+          <ul style="margin-top: 8px;">
+            <li><strong>Brian Cummings</strong> (#19354)</li>
+            <li><strong>Brian P. Manookian</strong> (#26455)</li>
+            <li><strong>Afsoon Hagh</strong> (#28393)</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Hammervold, PLC</strong></p>
+          <p style="font-size: 13px; color: var(--text-secondary);">315 Deaderick Street, Suite 1550, Nashville, TN 37238</p>
+          <ul style="margin-top: 8px;">
+            <li><strong>Mark Hammervold</strong> (#31147)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bio-section">
+        <h3>Counsel for StoneCrest / HCA</h3>
+        <p><strong>Gideon, Cooper & Essary, PLC</strong></p>
+        <p style="font-size: 13px; color: var(--text-secondary);">315 Deaderick Street, Suite 1100, Nashville, TN 37238</p>
+        <ul style="margin-top: 8px;">
+          <li><strong>C. J. Gideon, Jr.</strong></li>
+          <li><strong>J. Blake Carter</strong></li>
+        </ul>
+      </div>
+
+      <div class="bio-section">
+        <h3>Counsel for Dr. Clark Archer</h3>
+        <p><strong>Hall Booth Smith, P.C.</strong></p>
+        <p style="font-size: 13px; color: var(--text-secondary);">424 Church Street, Suite 2950, Nashville, TN 37219</p>
+        <ul style="margin-top: 8px;">
+          <li><strong>James E. Looper</strong></li>
+          <li><strong>Nathaniel T. Gorman</strong></li>
+        </ul>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function showPage(pageId) {
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  // Show selected page
+  const page = document.getElementById('page-' + pageId);
+  if (page) page.classList.add('active');
+
+  // Update sidebar active state
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  event.target.classList.add('active');
+
+  // Scroll main to top
+  document.querySelector('.main').scrollTo(0, 0);
+}
+
+function filterSidebar() {
+  const query = document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('.sidebar-link').forEach(link => {
+    const text = link.textContent.toLowerCase();
+    if (text.includes(query) || query === '') {
+      link.style.display = 'block';
+    } else {
+      link.style.display = 'none';
+    }
+  });
+  // Always show section titles
+  document.querySelectorAll('.sidebar-section-title').forEach(t => t.style.display = 'block');
+}
+</script>
+
+</body>
+</html>
